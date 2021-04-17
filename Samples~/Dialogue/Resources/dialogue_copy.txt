@@ -1,5 +1,5 @@
 ID	COPY 1	COPY 2	COPY 3	
-test_question1	What is the correct answer?	Correct answer	Wrong Answer	Wrong Anser
+test_question1	What is the correct answer?	Correct answer	Wrong Answer	Wrong Answer
 test_question_correct	Your answer is correct!
 test_question_wrong	Your answer is wrong!
 test_dialogue	Text 1	Text 2	Last Text
