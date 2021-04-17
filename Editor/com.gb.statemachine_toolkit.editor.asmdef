@@ -1,0 +1,16 @@
+{
+    "name": "com.gb.statemachine_toolkit.editor",
+    "rootNamespace": "",
+    "references": [
+        "com.gb.StateMachine_Toolkit.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

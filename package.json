@@ -1,0 +1,43 @@
+{
+    "name": "com.gb.statemachine_toolkit",
+    "displayName": "State Machine Toolkit",
+    "version": "1.0.0",
+    "unity": "2019.3",
+    "description": "A First Person Toolkit that lets you create your State Machine using the Unity Animator, without writing a line of code!",
+    "dependencies": {
+        "com.unity.textmeshpro": "2.0.1",
+		"com.unity.timeline": "1.2.14"
+	},
+	"samples": [
+    {
+        "displayName": "Text Examples",
+        "description": "The Text State Type is used to update the text of a Text or TextMeshProUGUI component",
+        "path": "Samples~/Text"
+    },
+    {
+        "displayName": "Dialogue Examples",
+        "description": "Dialogue State Type is used to show a Dialogue with a sequence of texts to be read pressing a next button, or a Question with answers that can be selected.",
+        "path": "Samples~/Dialogue"
+    },
+    {
+        "displayName": "Interaction Examples",
+        "description": "Dialogue State Type is used to show a Dialogue with a sequence of texts to be read pressing a next button, or a Question with answers that can be selected.",
+        "path": "Samples~/Interaction"
+    },
+    {
+        "displayName": "Cutscene Examples",
+        "description": "The Cutscene State Type is used to animate objects, start timelines and play videos, or simply set parameters of an animator.",
+        "path": "Samples~/Cutscene"
+    },
+    {
+        "displayName": "Object Examples",
+        "description": "The Object State is used to activate / deactivate a GameObject",
+        "path": "Samples~/Object"
+    },
+    {
+        "displayName": "Scene Change Examples",
+        "description": "The Scene Change State is used to load a new scene, with or without using a custom loader",
+        "path": "Samples~/SceneChange"
+    }
+	]
+}

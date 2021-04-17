@@ -1,0 +1,10 @@
+ID	COPY 1	COPY 2	COPY 3	
+test_question1	What is the correct answer?	Correct answer	Wrong Answer	Wrong Anser
+test_question_correct	Your answer is correct!
+test_question_wrong	Your answer is wrong!
+test_dialogue	Text 1	Text 2	Last Text
+test_dialogue2	Text 1	Text 2	Text 3	Text 4	Text 5	This is the last text. The next dialogue will be shown in 5 seconds after pressing the 'Next' button.	
+input_disabled	Input will be reactivated in 5 seconds
+movement_disabled	Movement will be reactivated in 5 seconds
+look_disabled	Mouse look will be reactivated in 5 seconds
+all_found	You found all the objects!
