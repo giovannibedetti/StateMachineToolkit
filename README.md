@@ -1,10 +1,11 @@
 # StateMachineToolkit
  A First Person Toolkit that lets you create your State Machine using the Unity Animator, without writing a line of code!
 
-**Dependencies:**  
 Unity >2019.1  
-TextMesh Pro  
-Unity Timeline  
+
+**Dependencies:**  
+TextMesh Pro 2.0.1  
+Unity Timeline 1.2.14  
 
 # Installation
 
