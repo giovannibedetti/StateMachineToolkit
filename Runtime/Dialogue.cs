@@ -82,7 +82,6 @@ namespace com.gb.statemachine_toolkit
             }
 
             sequenceText.SetText(copy[0]);
-            nextButton?.onClick.RemoveAllListeners();
 
             if (copy.Count == 1)
             {
@@ -90,6 +89,7 @@ namespace com.gb.statemachine_toolkit
                 // set next button to close the panel
                 nextButton?.onClick.AddListener(() =>
                 {
+                    nextButton.onClick.RemoveAllListeners();
                     animator.SetTrigger("Close");
                     _onLastText?.Invoke();
                     _onLastText = null;
