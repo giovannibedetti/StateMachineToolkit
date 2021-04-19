@@ -103,6 +103,7 @@ namespace com.gb.statemachine_toolkit
 
             nextButton?.onClick.AddListener(() =>
             {
+                nextButton.onClick.RemoveAllListeners();
                 ShowText(copy);
             });
         }
