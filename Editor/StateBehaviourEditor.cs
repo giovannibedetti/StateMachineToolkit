@@ -108,6 +108,7 @@ namespace com.gb.statemachine_toolkit.editor
 
         #endregion GUI_CONTENTS
 
+        #region BOOLS
         bool showTextHelp = false;
         bool showDialogueHelp = false;
         bool showInteractionHelp = false;
@@ -116,6 +117,7 @@ namespace com.gb.statemachine_toolkit.editor
         bool showObjectHelp = false;
         bool showAdvancedTransitions = false;
         bool showAdvancedTransitionsHelp = false;
+        #endregion
 
         GUIStyle helpStyle;
 
@@ -396,6 +398,8 @@ namespace com.gb.statemachine_toolkit.editor
             this.serializedObject.ApplyModifiedProperties();
         }
 
+        #region TRANSITIONS
+
         private void DrawTransition(int index, float width)
         {
             EditorGUILayout.BeginHorizontal(GUILayout.Width(width));
@@ -481,6 +485,7 @@ namespace com.gb.statemachine_toolkit.editor
 
             EditorGUILayout.EndHorizontal();
         }
+        #endregion TRANSITIONS
 
         private void DrawHelp(string helpString, GUIStyle helpStyle)
         {

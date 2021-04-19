@@ -1,7 +1,7 @@
 {
     "name": "com.gb.statemachine_toolkit",
     "displayName": "State Machine Toolkit",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2019.3",
     "description": "A First Person Toolkit that lets you create your State Machine using the Unity Animator, without writing a line of code!",
     "dependencies": {
