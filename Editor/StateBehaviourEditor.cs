@@ -155,6 +155,7 @@ namespace com.gb.statemachine_toolkit.editor
             m_objectToActivateTag = this.serializedObject.FindProperty("objectToActivateTag");
             m_activateObject = this.serializedObject.FindProperty("activateObject");
 
+            m_asyncLoad = this.serializedObject.FindProperty("asyncLoad");
             m_sceneToLoad = this.serializedObject.FindProperty("sceneToLoad");
             m_autoLoad = this.serializedObject.FindProperty("autoLoad");
 
@@ -326,13 +327,12 @@ namespace com.gb.statemachine_toolkit.editor
 
                 // SCENE_CHANGE
                 case 5:
+                    m_sceneToLoad.stringValue = EditorGUILayout.TextField(m_sceneToLoad_content, m_sceneToLoad.stringValue);
                     m_asyncLoad.boolValue = EditorGUILayout.Toggle(m_asyncLoad_content, m_asyncLoad.boolValue);
                     if (m_asyncLoad.boolValue)
-                    {
-                        m_sceneToLoad.stringValue = EditorGUILayout.TextField(m_sceneToLoad_content, m_sceneToLoad.stringValue);
                         m_autoLoad.boolValue = EditorGUILayout.Toggle(m_autoLoad_content, m_autoLoad.boolValue);
-                    }
                     break;
+
                 default: break;
             }
 
@@ -476,7 +476,6 @@ namespace com.gb.statemachine_toolkit.editor
                     t_triggerName.stringValue = EditorGUILayout.TextField(t_triggerName.stringValue, GUILayout.ExpandWidth(false), GUILayout.Width(rightWidth / 2));
                     break;
             }
-
             if (GUILayout.Button(removeButton_content, removeTrnsBtnWidth, GUILayout.ExpandWidth(false)))
                 m_transitions.DeleteArrayElementAtIndex(index);
 
@@ -490,6 +489,7 @@ namespace com.gb.statemachine_toolkit.editor
         }
 
         #region UTILITIES
+
         private static GUIContent GetGUIContent<Type>(SerializedProperty serializedProperty, bool inherit)
         {
             GUIContent content = new GUIContent("", "");
@@ -523,7 +523,7 @@ namespace com.gb.statemachine_toolkit.editor
 
             return ret;
         }
+
         #endregion UTILITIES
     }
-
 }
