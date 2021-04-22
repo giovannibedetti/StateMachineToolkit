@@ -50,6 +50,7 @@ namespace com.gb.statemachine_toolkit.editor
         SerializedProperty m_increaseStage;
         SerializedProperty m_increaseCustomInt;
         SerializedProperty m_customInt;
+        // TODO SerializedProperty m_clearActions;
         SerializedProperty m_transitions;
         SerializedProperty m_timeToWait;
 
@@ -94,6 +95,7 @@ namespace com.gb.statemachine_toolkit.editor
         GUIContent m_increaseStage_content;
         GUIContent m_increaseCustomInt_content;
         GUIContent m_customInt_content;
+        // TODO GUIContent m_clearActions_content;
 
         //GUIContent m_transitions_content;
         //GUIContent m_transitionType_content;
@@ -115,6 +117,7 @@ namespace com.gb.statemachine_toolkit.editor
         bool showCutsceneHelp = false;
         bool showTimelineHelp = false;
         bool showObjectHelp = false;
+        bool showSceneChangeHelp = false;
         bool showAdvancedTransitions = false;
         bool showAdvancedTransitionsHelp = false;
         #endregion
@@ -164,6 +167,7 @@ namespace com.gb.statemachine_toolkit.editor
             m_increaseStage = this.serializedObject.FindProperty("increaseStage");
             m_increaseCustomInt = this.serializedObject.FindProperty("increaseCustomInt");
             m_customInt = this.serializedObject.FindProperty("customInt");
+            // TODO m_clearActions = this.serializedObject.FindProperty("clearActionsOnInterruption");
             m_transitions = this.serializedObject.FindProperty("transitions");
             m_timeToWait = this.serializedObject.FindProperty("timeToWait");
 
@@ -204,6 +208,7 @@ namespace com.gb.statemachine_toolkit.editor
             m_increaseStage_content = GetGUIContent<StateBehaviour>(m_increaseStage, true);
             m_increaseCustomInt_content = GetGUIContent<StateBehaviour>(m_increaseCustomInt, true);
             m_customInt_content = GetGUIContent<StateBehaviour>(m_customInt, true);
+            // TODO m_clearActions_content = GetGUIContent<StateBehaviour>(m_clearActions, true);
             //m_transitions_content = GetGUIContent<StateBehaviour>(m_transitions, true);
 
             m_timeToWaitOnEnd_content = GetGUIContent<StateBehaviour>(m_timeToWait, true);
@@ -342,6 +347,8 @@ namespace com.gb.statemachine_toolkit.editor
             // since the StateManager is scene based and its settings are not carried over to the new scene.
             if (m_type.intValue == 5)
             {
+                showSceneChangeHelp = EditorGUILayout.Foldout(showSceneChangeHelp, "SCENE CHANGE HELP");
+                if (showSceneChangeHelp) DrawHelp(stateBehaviour.sceneHelp, helpStyle);
                 this.serializedObject.ApplyModifiedProperties();
                 return;
             }
@@ -359,6 +366,7 @@ namespace com.gb.statemachine_toolkit.editor
                     m_customInt.stringValue = EditorGUILayout.TextField(m_customInt_content, m_customInt.stringValue);
                     EditorGUI.indentLevel--;
                 }
+                //TODO m_clearActions.boolValue = EditorGUILayout.Toggle(m_clearActions_content, m_clearActions.boolValue);
 
                 EditorGUILayout.Space();
                 showAdvancedTransitions = EditorGUILayout.Foldout(showAdvancedTransitions, "ADVANCED TRANSITIONS");

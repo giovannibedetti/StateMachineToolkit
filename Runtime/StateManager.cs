@@ -13,9 +13,7 @@ namespace com.gb.statemachine_toolkit
     public class StateManager : MonoBehaviour
     {
         [Tooltip("The player GameObject. " +
-            "\nTo be able to move, it needs a PlayerMovement component." +
-            "\nTo be able to click on InteractiveObjects, it needs the InputController component." +
-            "\nTo be able to rotate the look, it needs to have a Camera as a child, with a MouseLook component.")]
+            "\nTo be able to move, click on InteractiveObjects, and rotate its camera, it needs a PlayerController component.")]
         public GameObject player;
         [Tooltip("The main dialogue that will be used to display sequence of texts or questions.")]
         public Dialogue dialogue;

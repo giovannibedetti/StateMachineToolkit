@@ -61,15 +61,15 @@ namespace com.gb.statemachine_toolkit
 
         #region INTERACTION
         [Tooltip("If the interaction should be enabled or disabled. " +
-            "If this is selected all the interaction scripts will be enabled, and disabled otherwise.")]
+            "If this is selected all the interactions will be enabled, and disabled otherwise.")]
         public bool enableInteraction = true;
-        [Tooltip("If the input should be enabled or disabled. The InputController script handles the player clicks on the InteractiveObjects present in the scene.")]
+        [Tooltip("If the input should be enabled or disabled, so that the player is able or not to click on the InteractiveObjects present in the scene.")]
         public bool enableInput = true;
-        [Tooltip("If the movement should be enabled or disabled. ")]
+        [Tooltip("If the movement should be enabled or disabled.")]
         public bool enableMovement = true;
         [Tooltip("If the mouse look should be enabled or disabled")]
         public bool enableLook = true;
-        [Tooltip("The tag of the InteractiveObject that will be enabled in this state")]
+        [Tooltip("The tag of the InteractiveObjects that will be enabled in this state")]
         public string interactiveObjectsTag;
         #endregion INTERACTION
 
@@ -112,6 +112,7 @@ namespace com.gb.statemachine_toolkit
         [Tooltip("If selected, the user has to click a button to activate a scene, otherwise the new scene is auto loaded as soon as it's ready.")]
         public bool autoLoad;
         #endregion SCENE_CHANGE
+        
         #region TRANSITION
 
         [Tooltip("If selected it increases by one the \"Stage\" parameter in the StateManager animator, " +
@@ -122,6 +123,8 @@ namespace com.gb.statemachine_toolkit
         public bool increaseCustomInt = false;
         [Tooltip("The custom Int parameter that is increased at the end of this state, if \"Increase Custom Int\" is true")]
         public string customInt;
+        // TODO [Tooltip("If the wait (and the carried actions) should be interrupted before completing them when this state is exited ")]
+        // TODO public bool clearActionsOnInterruption = true;
 
         public List<Transition> transitions = new List<Transition>();
 
@@ -213,23 +216,23 @@ namespace com.gb.statemachine_toolkit
             "\nIf you drag an AudioClip above another, it will crossfade between the two." +
             "\n\nRefer to the TimeLine docs for more information.";
 
-        public readonly string interactionHelp = "The <b>INTERACTION STATE</b> is used to activate/deactivate the Player interaction scripts: <b><i>InputController</i></b>, <b><i>MovementController</i></b> and <b><i>MouseLook</i></b>." +
+        public readonly string interactionHelp = "The <b>INTERACTION STATE</b> is used to activate/deactivate the <b><i>Input</i></b>, <b><i>Movement</i></b> and <b><i>MouseLook</i></b> of the Player." +
             "\n\nBased on the chosen <b><i>Interaction Type</i></b>, they can be controlled together or selectively:" +
             "\n\nIf <b>ALL</b> is selected, all the interactions are activated/deactivated based on the <b>Enable Interaction</b> toggle. " +
-            "\n\nIf <b>INPUT</b> is selected, just the InputController component is activated/deactivated." +
-            "\n\nIf <b>MOVEMENT</b> is selected, just the MovementController component is activated/deactivated." +
-            "\n\nIf <b>LOOK</b> is selected, just the MouseLook component is activated/deactivated." +
+            "\n\nIf <b>INPUT</b> is selected, just the Input is activated/deactivated." +
+            "\n\nIf <b>MOVEMENT</b> is selected, just the Movement is activated/deactivated." +
+            "\n\nIf <b>LOOK</b> is selected, just the MouseLook is activated/deactivated." +
             "\n\nIf <b>MIXED</b> is selected, they can be selectively activated/deactivated." +
             "\n\nIf the <b><i>Interactive Objects Tag</i></b> is specified, it will enable/disable the collider of all the GameObjects found with that Tag. " +
-            "\nFor the interaction to work, each GameObject needs an InteractiveObject component, and to be on the Layer specified in the InputController component.";
+            "\nFor the interaction to work, each GameObject needs an InteractiveObject component, and to be on the same Layer specified in the InputController component.";
 
-        public readonly string objectHelp = "The <b>OBJECT STATE</b> is used to manage the activation/deactivation of a GameObject." +
+        public readonly string objectHelp = "The <b>OBJECT STATE</b> is used to manage the activation/deactivation of a GameObject present in the Scene." +
             "\n\nSet a tag on the target GameObject and write the tag in the <i>Object To Activate Tag</i>. " +
             "\nIf <i>Activate Object</i> is selected, the GameObject will be activated, and deactivated otherwise.";
 
         public readonly string sceneHelp = "The <b>SCENE_CHANGE STATE</b> is used to load a new scene. Just set the name of the scene to load in <i>Scene To Load</i> field." +
             "\nNo transition settings are available since the StateManager is scene based, and the changes to parameter aren't carried over into the new scene.";
-        public readonly string transitionsHelp = "The <b>Advanced Transitions</b> can be used to Increase, Decrease or Set the specified parameters, so that the the flow of the StateMachine can be modified.";
+        public readonly string transitionsHelp = "The <b>Advanced Transitions</b> can be used to Increase, Decrease or Set the specified STAGE, INT, BOOL or TRIGGER parameters, so that the the flow of the StateMachine can be modified.";
         #endregion HELP_MSG
 
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -420,6 +423,9 @@ namespace com.gb.statemachine_toolkit
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            // TODO if this is false, avoid resetting the wait routines
+            // if (!clearActionsOnInterruption) return;
+
             // stop the existing waiting routines when the state is exited
             // if execution of this state wasn't interrupted, they should be already null
             // if execution was interrupted, they could be still active, so stop them
