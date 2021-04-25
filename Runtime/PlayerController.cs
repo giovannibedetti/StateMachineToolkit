@@ -54,6 +54,12 @@ namespace com.gb.statemachine_toolkit
         public Transform playerCamera;
         private float xRotation = 0f;
 
+        [Header("PHYSICS")]
+        [Tooltip("If the player should use physics to interact with objects with rigidbodies, and be able to move them")]
+        public bool usePhysics;
+        [Tooltip("The push power of the player towards the rigidbodies")]
+        public float pushPower = 2f;
+
         [Header("DEBUG")]
         [Tooltip("Select this to print debug information")]
         public bool debug;
@@ -212,6 +218,29 @@ namespace com.gb.statemachine_toolkit
         private void SetIconVisibility(bool visible)
         {
             iconAnimator.SetBool(iconAnimatorBool, visible);
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            // do nothing if usePhysics is false
+            if (!usePhysics) return;
+
+            Rigidbody body = hit.collider.attachedRigidbody;
+            // do nothing if there's no rigidbody
+            if (body == null || body.isKinematic)
+                return;
+            // this could be superfluous, discards the cases where the player pushes the objects downwards
+            if (hit.moveDirection.y < -0.1f)
+                return;
+
+            // Calculate push direction from move direction,
+            // we only push objects to the sides never up and down
+            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+
+            // Apply the push
+            //body.velocity = pushDir * speed * pushPower;
+            // use a point slightly above the center of the object as the hit position for now
+            body.AddForceAtPosition(pushDir * speed * pushPower, new Vector3(0, 0.5f, 0));
         }
     }
 }
