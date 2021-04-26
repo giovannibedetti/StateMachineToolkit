@@ -53,7 +53,13 @@ namespace com.gb.statemachine_toolkit
                 Debug.LogWarning("No animator found in Dialogue. Please add an animator. ");
             }
 
-            Debug.Log($"Showing Dialogue with copy {copy}");
+            Debug.Log($"Showing Dialogue with copy {copy.Count}");
+            var count = 0;
+            foreach (var text in copy)
+            {
+                Debug.Log($"{text} {count}");
+                count++;
+            }
             nextButton?.onClick.RemoveAllListeners();
             var newCopy = copy;
 
