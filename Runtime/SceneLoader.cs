@@ -50,6 +50,12 @@ namespace com.gb.statemachine_toolkit
             this._allowSceneActivation = true;
         }
 
+        public void ToggleFullscreen()
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+
+        }
+
         private static SceneLoader _instance;
         private bool _allowSceneActivation;
 
@@ -78,6 +84,16 @@ namespace com.gb.statemachine_toolkit
                         }
                         else
                             lc.startButton.gameObject.SetActive(false);
+                    }
+                    if (lc.fullscreenButton)
+                    {
+                        if (!autoActivateScene)
+                        {
+                            lc.fullscreenButton.onClick.AddListener(()=> { lc.fullscreenButton.gameObject.SetActive(false); Screen.fullScreen = !Screen.fullScreen; });
+                            lc.fullscreenButton.gameObject.SetActive(true);
+                        }
+                        else
+                            lc.fullscreenButton.gameObject.SetActive(false);
                     }
                 }
             }
