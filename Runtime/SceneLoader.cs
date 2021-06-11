@@ -89,7 +89,7 @@ namespace com.gb.statemachine_toolkit
                     {
                         if (!autoActivateScene)
                         {
-                            lc.fullscreenButton.onClick.AddListener(()=> { lc.fullscreenButton.gameObject.SetActive(false); Screen.fullScreen = !Screen.fullScreen; });
+                            lc.fullscreenButton.onClick.AddListener(()=> { lc.fullscreenButton.gameObject.SetActive(false); Screen.fullScreen = true; });
                             lc.fullscreenButton.gameObject.SetActive(true);
                         }
                         else
