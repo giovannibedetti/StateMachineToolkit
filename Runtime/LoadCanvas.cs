@@ -9,5 +9,9 @@ namespace com.gb.statemachine_toolkit
         public GameObject introText;
         public GameObject progressImage;
         public Image progressFillImage;
+        public void ToggleFullscreen()
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+        }
     }
 }
