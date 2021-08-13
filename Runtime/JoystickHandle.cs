@@ -130,6 +130,14 @@ namespace com.gb.statemachine_toolkit
             this._startPos = Vector2.zero;
         }
 
+        /// <summary>
+        /// Hack to restore the position to zero when resolution changes. 
+        /// Can cause an unwanted position when the starting position is not Vector2.zero
+        /// </summary>
+        public void OnResolutionChanged()
+        {
+            this._defaultPos = Vector2.zero;
+        }
 
         private Touch GetTouch(Touch[] touches, int id)
         {

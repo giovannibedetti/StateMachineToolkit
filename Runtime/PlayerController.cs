@@ -66,6 +66,8 @@ namespace com.gb.statemachine_toolkit
 
         public bool IsMobile { get { return Application.isMobilePlatform && Input.touchSupported; } }
 
+        public void OnResolutionChanged() { Debug.Log("PlayerController: OnResolutionChanged"); lookJoystick.OnResolutionChanged(); movementJoystick.OnResolutionChanged(); }
+
         // Start is called before the first frame update
         void Start()
         {
