@@ -51,8 +51,9 @@ namespace com.gb.statemachine_toolkit
                     if (Application.isMobilePlatform && Input.touchSupported && !Application.isEditor)
                     {
                         if (this._touchId < 0) return;
-
-                        this.handle.transform.position = GetTouch(Input.touches, this._touchId).position; //Input.touches[this._touchId].position;
+                        var touch = GetTouch(Input.touches, this._touchId);
+                        if (touch.fingerId < 0) return;
+                        this.handle.transform.position = touch.position; //Input.touches[this._touchId].position;
                     }
                     else
                     {
@@ -78,6 +79,7 @@ namespace com.gb.statemachine_toolkit
                 else
                 {
                     //restore the default position
+                    //this.handle.transform.position = this._defaultPos;
                     this.handle.transform.position = this._defaultPos;
                     this._dir = Vector2.zero;
                     //invoke the moved event with a zero Vector2
@@ -111,7 +113,7 @@ namespace com.gb.statemachine_toolkit
         public void OnPointerDown(PointerEventData eventData)
         {
             if (!this.active) return;
-            Debug.Log(this.name + " OnPointerDown");
+            Debug.Log($"{this.name} OnPointerDown, pointerId: {eventData.pointerId}");
             if (this._pressed) return;
 
             this._pressed = true;
@@ -122,7 +124,7 @@ namespace com.gb.statemachine_toolkit
         public void OnPointerUp(PointerEventData eventData)
         {
             if (!this.active) return;
-            Debug.Log(this.name + " OnPointerUp");
+            Debug.Log($"{this.name} OnPointerUp, pointerId: {eventData.pointerId}");
             if (eventData.pointerId != this._touchId) return;
 
             this._pressed = false;
@@ -133,20 +135,24 @@ namespace com.gb.statemachine_toolkit
         /// <summary>
         /// Hack to restore the position to zero when resolution changes. 
         /// Can cause an unwanted position when the starting position is not Vector2.zero
+        /// Basically it assumes the handle is centered in the container, with no margins
         /// </summary>
         public void OnResolutionChanged()
         {
-            this._defaultPos = Vector2.zero;
+            this.handle.GetComponent<RectTransform>().localPosition = Vector2.zero;
+            this._defaultPos = this.handle.transform.localPosition;
         }
 
         private Touch GetTouch(Touch[] touches, int id)
         {
-            Touch t = new Touch() { fingerId = -1 };
+            Touch t = new Touch() { fingerId = -1, position = Vector2.zero };
             foreach (var touch in touches)
             {
                 if (!touch.fingerId.Equals(id))
                     continue;
+                Debug.Log($"Found touch id: {id}");
                 t = touch;
+                return t;
             }
             return t;
         }
