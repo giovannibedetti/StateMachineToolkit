@@ -141,6 +141,7 @@ namespace com.gb.statemachine_toolkit
         {
             this.handle.GetComponent<RectTransform>().localPosition = Vector2.zero;
             this._defaultPos = this.handle.transform.localPosition;
+            Debug.Log($"OnResolutionChanged: {_defaultPos}");
         }
 
         private Touch GetTouch(Touch[] touches, int id)
