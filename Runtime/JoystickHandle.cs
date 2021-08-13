@@ -50,8 +50,9 @@ namespace com.gb.statemachine_toolkit
                     ///Debug.Log($"Application.isMobilePlatform {Application.isMobilePlatform} Input.touchSupported: {Input.touchSupported} Application.isEditor {Application.isEditor}");
                     if (Application.isMobilePlatform && Input.touchSupported && !Application.isEditor)
                     {
-                        if (this._touchId < 0 || this._touchId >= Input.touches.Length) return;
-                        this.handle.transform.position = Input.touches[this._touchId].position;
+                        if (this._touchId < 0) return;
+
+                        this.handle.transform.position = GetTouch(Input.touches, this._touchId).position; //Input.touches[this._touchId].position;
                     }
                     else
                     {
@@ -92,7 +93,7 @@ namespace com.gb.statemachine_toolkit
                //$"_dir {_dir}");
             }
 
-            // hack to avoid pointer remain stucked in wrong positions
+            // hack to avoid pointer remaining stucked in wrong positions
             if (Input.touches.Length == 0)
             {
                 //restore the default position
@@ -127,6 +128,19 @@ namespace com.gb.statemachine_toolkit
             this._pressed = false;
             this._touchId = -1;
             this._startPos = Vector2.zero;
+        }
+
+
+        private Touch GetTouch(Touch[] touches, int id)
+        {
+            Touch t = new Touch() { fingerId = -1 };
+            foreach (var touch in touches)
+            {
+                if (!touch.fingerId.Equals(id))
+                    continue;
+                t = touch;
+            }
+            return t;
         }
     }
 }
