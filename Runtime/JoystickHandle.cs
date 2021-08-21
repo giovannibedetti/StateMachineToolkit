@@ -140,7 +140,7 @@ namespace com.gb.statemachine_toolkit
         public void OnResolutionChanged()
         {
             this.handle.GetComponent<RectTransform>().localPosition = Vector2.zero;
-            this._defaultPos = this.handle.transform.localPosition;
+            this._defaultPos = this.handle.transform.position;
             Debug.Log($"OnResolutionChanged: {_defaultPos}");
         }
 
