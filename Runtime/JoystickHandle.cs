@@ -139,9 +139,9 @@ namespace com.gb.statemachine_toolkit
         /// </summary>
         public void OnResolutionChanged()
         {
-            this.handle.GetComponent<RectTransform>().localPosition = joystickContainer.transform.position; //Vector2.zero;
+            this.handle.transform.position = joystickContainer.transform.position; //Vector2.zero;
             this._defaultPos = this.handle.transform.position;
-            Debug.Log($"OnResolutionChanged: defaultPos: {_defaultPos} localPos: {this.handle.GetComponent<RectTransform>().localPosition}  joystickContainer.transform.position: {joystickContainer.transform.position}");
+            Debug.Log($"OnResolutionChanged: defaultPos: {_defaultPos}, handle localPos: {this.handle.GetComponent<RectTransform>().localPosition}, handle pos: {this.handle.transform.position} joystickContainer.transform.position: {joystickContainer.transform.position}");
         }
 
         private Touch GetTouch(Touch[] touches, int id)
