@@ -98,15 +98,19 @@ namespace com.gb.statemachine_toolkit
             // hack to avoid pointer remaining stucked in wrong positions
             if (Input.touches.Length == 0)
             {
-                //restore the default position
-                this._pressed = false;
-                this._touchId = -1;
-                this._startPos = Vector2.zero;
-                this.handle.transform.position = this._defaultPos;
-                this._dir = Vector2.zero;
+                if (_pressed)
+                { 
+                    Debug.Log($"{this.name} no touches, restoring handle position");
+                    //restore the default position
+                    this._pressed = false;
+                    this._touchId = -1;
+                    this._startPos = Vector2.zero;
+                    this.handle.transform.position = this._defaultPos;
+                    this._dir = Vector2.zero;
 
-                //invoke the moved event with a zero Vector2
-                MovedEvent?.Invoke(Vector2.zero);
+                    //invoke the moved event with a zero Vector2
+                    MovedEvent?.Invoke(Vector2.zero);
+                }
             }
         }
 
