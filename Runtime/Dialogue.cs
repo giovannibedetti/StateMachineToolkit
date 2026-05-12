@@ -156,6 +156,11 @@ namespace com.gb.statemachine_toolkit
 
             // remove first text after setting the question
             strings.RemoveAt(0);
+
+            // clear any answers from a previous call
+            foreach (Transform child in answersContainer)
+                Destroy(child.gameObject);
+
             var answerID = 0;
             // the remaining texts are answers
             foreach (var answer in strings)
