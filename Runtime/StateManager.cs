@@ -213,7 +213,7 @@ namespace com.gb.statemachine_toolkit
             dialogue.Show(strings, NextStage);
         }
 
-        public void OpenQuestion(string copyId, string answerIntParam, float timeToWait, Action onAnswer)
+        public void OpenQuestion(string copyId, string answerIntParam, Action onAnswer)
         {
             if (!dialogue)
             {
@@ -228,7 +228,7 @@ namespace com.gb.statemachine_toolkit
                 return;
             }
 
-            dialogue.ShowQuestion(strings, timeToWait, (parameter) =>
+            dialogue.ShowQuestion(strings, (parameter) =>
             {
                 this.SetInt(answerIntParam, parameter);
                 onAnswer?.Invoke();

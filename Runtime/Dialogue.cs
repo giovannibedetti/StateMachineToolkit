@@ -32,6 +32,10 @@ namespace com.gb.statemachine_toolkit
         // The animator that will manage opening and closing of the Dialogue
         private Animator animator;
 
+        [Header("ANIMATION")]
+        [Tooltip("Time in seconds to wait after the Close animation before calling the next action. Set this to match the duration of your Close animation clip.")]
+        public float closeWaitTime = 0f;
+
         private List<string> currentCopy;
         private Action _onLastText;
         private Action _onAnswer;
@@ -64,7 +68,13 @@ namespace com.gb.statemachine_toolkit
             var newCopy = new List<string>(copy);
 
             animator?.SetTrigger("Open");
-            ShowText(newCopy);
+            StartCoroutine(ShowTextNextFrame(newCopy));
+        }
+
+        private System.Collections.IEnumerator ShowTextNextFrame(List<string> copy)
+        {
+            yield return null;
+            ShowText(copy);
         }
 
         public void Show(List<string> copy, Action onLastText)
@@ -98,8 +108,12 @@ namespace com.gb.statemachine_toolkit
                 {
                     nextButton.onClick.RemoveAllListeners();
                     animator.SetTrigger("Close");
-                    _onLastText?.Invoke();
-                    _onLastText = null;
+                    Utilities.WaitThenAct(this, closeWaitTime, () =>
+                    {
+                        _onLastText?.Invoke();
+                        _onLastText = null;
+                    });
+                    
                 });
 
                 return;
@@ -115,7 +129,7 @@ namespace com.gb.statemachine_toolkit
             });
         }
 
-        public void ShowQuestion(List<string> copy, float timeToWait, Action<int> onAnswer)
+        public void ShowQuestion(List<string> copy, Action<int> onAnswer)
         {
             // to show a question we need at least 2 copy texts, one for the question and one for the answer
             if (copy == null || copy.Count <= 1)
@@ -155,8 +169,8 @@ namespace com.gb.statemachine_toolkit
                 var aID = answerID;
                 aComp.SetAnswer(answer, () =>
                 {
-                    Utilities.WaitThenAct(this, timeToWait, () => onAnswer(aID));
                     animator.SetTrigger("Close");
+                    Utilities.WaitThenAct(this, closeWaitTime, () => onAnswer(aID));
                 });
                 answerID++;
             }

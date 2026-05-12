@@ -315,6 +315,18 @@ namespace com.gb.statemachine_toolkit
                 };
             }
 
+            // For DIALOGUE states, advanced transitions must fire after user interaction,
+            // not independently. Chain them into nextAction before passing it to OpenDialogue.
+            if (type == StateType.DIALOGUE && transitions != null && transitions.Count > 0)
+            {
+                var existingNext = nextAction;
+                nextAction = () =>
+                {
+                    existingNext?.Invoke();
+                    _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));
+                };
+            }
+
             switch (type)
             {
                 case StateType.TEXT:
@@ -331,7 +343,7 @@ namespace com.gb.statemachine_toolkit
                             stateManager.OpenDialogue(dialogueID, nextAction);
                             break;
                         case DialogueType.QUESTION:
-                            stateManager.OpenQuestion(dialogueID, answerIntParameter, timeToWait, nextAction);
+                            stateManager.OpenQuestion(dialogueID, answerIntParameter, nextAction);
                             break;
                         default:
                             break;
@@ -412,8 +424,8 @@ namespace com.gb.statemachine_toolkit
                 if (increaseStage || increaseCustomInt) nextAction();
             }
 
-            // advanced transition actions
-            if (transitions != null && transitions.Count > 0)
+            // advanced transition actions (DIALOGUE handles these via nextAction, see above)
+            if (transitions != null && transitions.Count > 0 && type != StateType.DIALOGUE)
             {
                 Debug.Log($"{Time.time} found {transitions.Count} transitions, started waiting {timeToWait} before calling their actions");
                 _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));
