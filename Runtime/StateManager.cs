@@ -590,6 +590,80 @@ namespace com.gb.statemachine_toolkit
 
         #endregion OBJECT
 
+        #region AUDIO
+
+        public void PlayAudio(string audioSourceTag, AudioClip clip, bool loop, bool is3D, string positionTag, Vector3 position)
+        {
+            if (!clip)
+            {
+                Debug.LogWarning("Cannot play audio, no AudioClip assigned.");
+                return;
+            }
+
+            var go = string.IsNullOrWhiteSpace(audioSourceTag) ? null : GameObject.FindGameObjectWithTag(audioSourceTag);
+            if (!go)
+            {
+                go = new GameObject(string.IsNullOrWhiteSpace(audioSourceTag) ? "AudioSource" : audioSourceTag);
+                go.transform.SetParent(this.transform);
+                if (!string.IsNullOrWhiteSpace(audioSourceTag))
+                    go.tag = audioSourceTag;
+            }
+
+            var audioSource = go.GetComponent<AudioSource>();
+            if (!audioSource)
+                audioSource = go.AddComponent<AudioSource>();
+
+            if (!string.IsNullOrWhiteSpace(positionTag))
+            {
+                var posGo = GameObject.FindGameObjectWithTag(positionTag);
+                if (posGo)
+                {
+                    go.transform.SetParent(posGo.transform, false);
+                    go.transform.localPosition = position;
+                }
+                else
+                {
+                    Debug.LogWarning($"Cannot find GameObject with tag '{positionTag}', using world position as fallback.");
+                    go.transform.SetParent(this.transform, false);
+                    go.transform.position = position;
+                }
+            }
+            else
+            {
+                go.transform.SetParent(this.transform, false);
+                go.transform.position = position;
+            }
+
+            audioSource.clip = clip;
+            audioSource.loop = loop;
+            audioSource.spatialBlend = is3D ? 1f : 0f;
+            audioSource.Play();
+        }
+
+        public void StopAudio(string audioSourceTag)
+        {
+            if (string.IsNullOrWhiteSpace(audioSourceTag))
+            {
+                Debug.LogWarning("Cannot stop audio, audioSourceTag is empty.");
+                return;
+            }
+            var go = GameObject.FindGameObjectWithTag(audioSourceTag);
+            if (!go)
+            {
+                Debug.LogWarning($"Cannot stop audio, no GameObject found with tag '{audioSourceTag}'.");
+                return;
+            }
+            var audioSource = go.GetComponent<AudioSource>();
+            if (!audioSource)
+            {
+                Debug.LogWarning($"No AudioSource found on GameObject with tag '{audioSourceTag}'.");
+                return;
+            }
+            audioSource.Stop();
+        }
+
+        #endregion AUDIO
+
         #region SCENE_CHANGE
 
         public void LoadScene(string sceneName)

@@ -47,6 +47,14 @@ namespace com.gb.statemachine_toolkit.editor
         SerializedProperty m_sceneToLoad;
         SerializedProperty m_autoLoad;
 
+        SerializedProperty m_audioSourceTag;
+        SerializedProperty m_audioClip;
+        SerializedProperty m_playAudio;
+        SerializedProperty m_loop;
+        SerializedProperty m_is3D;
+        SerializedProperty m_positionTag;
+        SerializedProperty m_audioPosition;
+
         SerializedProperty m_increaseStage;
         SerializedProperty m_increaseCustomInt;
         SerializedProperty m_customInt;
@@ -92,6 +100,14 @@ namespace com.gb.statemachine_toolkit.editor
         GUIContent m_sceneToLoad_content;
         GUIContent m_autoLoad_content;
 
+        GUIContent m_audioSourceTag_content;
+        GUIContent m_audioClip_content;
+        GUIContent m_playAudio_content;
+        GUIContent m_loop_content;
+        GUIContent m_is3D_content;
+        GUIContent m_positionTag_content;
+        GUIContent m_audioPosition_content;
+
         GUIContent m_increaseStage_content;
         GUIContent m_increaseCustomInt_content;
         GUIContent m_customInt_content;
@@ -118,6 +134,7 @@ namespace com.gb.statemachine_toolkit.editor
         bool showTimelineHelp = false;
         bool showObjectHelp = false;
         bool showSceneChangeHelp = false;
+        bool showAudioHelp = false;
         bool showAdvancedTransitions = false;
         bool showAdvancedTransitionsHelp = false;
         #endregion
@@ -204,6 +221,22 @@ namespace com.gb.statemachine_toolkit.editor
             m_asyncLoad_content = GetGUIContent<StateBehaviour>(m_asyncLoad, true);
             m_sceneToLoad_content = GetGUIContent<StateBehaviour>(m_sceneToLoad, true);
             m_autoLoad_content = GetGUIContent<StateBehaviour>(m_autoLoad, true);
+
+            m_audioSourceTag = this.serializedObject.FindProperty("audioSourceTag");
+            m_audioClip = this.serializedObject.FindProperty("audioClip");
+            m_playAudio = this.serializedObject.FindProperty("playAudio");
+            m_loop = this.serializedObject.FindProperty("loop");
+            m_is3D = this.serializedObject.FindProperty("is3D");
+            m_positionTag = this.serializedObject.FindProperty("positionTag");
+            m_audioPosition = this.serializedObject.FindProperty("audioPosition");
+
+            m_audioSourceTag_content = GetGUIContent<StateBehaviour>(m_audioSourceTag, true);
+            m_audioClip_content = GetGUIContent<StateBehaviour>(m_audioClip, true);
+            m_playAudio_content = GetGUIContent<StateBehaviour>(m_playAudio, true);
+            m_loop_content = GetGUIContent<StateBehaviour>(m_loop, true);
+            m_is3D_content = GetGUIContent<StateBehaviour>(m_is3D, true);
+            m_positionTag_content = GetGUIContent<StateBehaviour>(m_positionTag, true);
+            m_audioPosition_content = GetGUIContent<StateBehaviour>(m_audioPosition, true);
 
             m_increaseStage_content = GetGUIContent<StateBehaviour>(m_increaseStage, true);
             m_increaseCustomInt_content = GetGUIContent<StateBehaviour>(m_increaseCustomInt, true);
@@ -338,6 +371,26 @@ namespace com.gb.statemachine_toolkit.editor
                     m_asyncLoad.boolValue = EditorGUILayout.Toggle(m_asyncLoad_content, m_asyncLoad.boolValue);
                     if (m_asyncLoad.boolValue)
                         m_autoLoad.boolValue = EditorGUILayout.Toggle(m_autoLoad_content, m_autoLoad.boolValue);
+                    break;
+
+                // AUDIO
+                case 6:
+                    showAudioHelp = EditorGUILayout.Foldout(showAudioHelp, "AUDIO HELP");
+                    if (showAudioHelp) DrawHelp(stateBehaviour.audioHelpMsg, helpStyle);
+                    EditorGUILayout.Space();
+                    m_audioSourceTag.stringValue = EditorGUILayout.TextField(m_audioSourceTag_content, m_audioSourceTag.stringValue);
+                    m_playAudio.boolValue = EditorGUILayout.Toggle(m_playAudio_content, m_playAudio.boolValue);
+                    if (m_playAudio.boolValue)
+                    {
+                        EditorGUILayout.PropertyField(m_audioClip, m_audioClip_content);
+                        m_loop.boolValue = EditorGUILayout.Toggle(m_loop_content, m_loop.boolValue);
+                        m_is3D.boolValue = EditorGUILayout.Toggle(m_is3D_content, m_is3D.boolValue);
+                        if (m_is3D.boolValue)
+                        {
+                            m_positionTag.stringValue = EditorGUILayout.TextField(m_positionTag_content, m_positionTag.stringValue);
+                            EditorGUILayout.PropertyField(m_audioPosition, m_audioPosition_content);
+                        }
+                    }
                     break;
 
                 default: break;

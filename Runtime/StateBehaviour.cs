@@ -14,7 +14,7 @@ namespace com.gb.statemachine_toolkit
         /// <summary>
         /// The various types a State can assume
         /// </summary>
-        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE }
+        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE, AUDIO }
         public StateType type;
 
         /// <summary>
@@ -103,6 +103,23 @@ namespace com.gb.statemachine_toolkit
         [Tooltip("If the GameObject with the above Tag should be activated or deactivated")]
         public bool activateObject;
         #endregion OBJECT
+
+        #region AUDIO
+        [Tooltip("The tag of the GameObject with the AudioSource component. If no GameObject with this tag is found, a new one will be created as a child of the StateManager.")]
+        public string audioSourceTag;
+        [Tooltip("The AudioClip to play.")]
+        public AudioClip audioClip;
+        [Tooltip("If selected, plays the AudioClip. If not selected, stops the AudioSource.")]
+        public bool playAudio = true;
+        [Tooltip("If the AudioClip should loop.")]
+        public bool loop = false;
+        [Tooltip("If selected, the audio will be 3D (spatialBlend = 1). If not, 2D (spatialBlend = 0).")]
+        public bool is3D = false;
+        [Tooltip("The tag of the GameObject to use as position reference. If specified and found, the AudioSource will be parented to that object and Audio Position used as local offset. If not found, Audio Position is used as world position.")]
+        public string positionTag;
+        [Tooltip("World position of the AudioSource. If Position Tag is specified and found, used as local offset instead.")]
+        public Vector3 audioPosition;
+        #endregion AUDIO
 
         #region SCENE_CHANGE
         [Tooltip("If the scene should be loaded asynchronously or not")]
@@ -230,6 +247,14 @@ namespace com.gb.statemachine_toolkit
             "\n\nSet a tag on the target GameObject and write the tag in the <i>Object To Activate Tag</i>. " +
             "\nIf <i>Activate Object</i> is selected, the GameObject will be activated, and deactivated otherwise.";
 
+        public readonly string audioHelpMsg = "The <b>AUDIO STATE</b> is used to play or stop an AudioSource in the scene." +
+            "\n\nIt looks for a GameObject with the specified <i>Audio Source Tag</i>. If not found, it creates a new GameObject with an AudioSource as a child of the StateManager and assigns it the given tag." +
+            "\n\nIf <i>Play Audio</i> is selected, the AudioClip will be played. If not, the AudioSource will be stopped." +
+            "\n\n<b>Positioning:</b>" +
+            "\n- If <i>Position Tag</i> is not specified, the AudioSource is placed at the world position in <i>Audio Position</i>." +
+            "\n- If <i>Position Tag</i> is specified and found, the AudioSource is parented to that object and <i>Audio Position</i> is used as local offset." +
+            "\n- If <i>Position Tag</i> is specified but not found, a warning is logged and the world position is used as fallback.";
+
         public readonly string sceneHelp = "The <b>SCENE_CHANGE STATE</b> is used to load a new scene. Just set the name of the scene to load in <i>Scene To Load</i> field." +
             "\nNo transition settings are available since the StateManager is scene based, and the changes to parameter aren't carried over into the new scene.";
         public readonly string transitionsHelp = "The <b>Advanced Transitions</b> can be used to Increase, Decrease or Set the specified STAGE, INT, BOOL or TRIGGER parameters, so that the the flow of the StateMachine can be modified.";
@@ -240,7 +265,11 @@ namespace com.gb.statemachine_toolkit
         {
             Debug.Log($"{Time.time} Entering state {stateInfo.fullPathHash} {name}");
             stateManager = animator.GetComponent<StateManager>();
-            if (!stateManager) return;
+            if (!stateManager)
+            {
+                Debug.LogWarning($"StateManager not found on {animator.gameObject.name}. Make sure a StateManager component is present in the scene.");
+                return;
+            }
 
             Action nextAction = null;
             if (increaseStage || increaseCustomInt)
@@ -412,6 +441,14 @@ namespace com.gb.statemachine_toolkit
                 case StateType.SCENE_CHANGE:
                     stateManager.LoadScene(sceneToLoad, asyncLoad, autoLoad);
                     break;
+
+                case StateType.AUDIO:
+                    if (playAudio)
+                        stateManager.PlayAudio(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition);
+                    else
+                        stateManager.StopAudio(audioSourceTag);
+                    break;
+
                 default:
                     break;
             }
