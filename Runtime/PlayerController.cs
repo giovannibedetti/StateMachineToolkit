@@ -124,7 +124,7 @@ namespace com.gb.statemachine_toolkit
                         mobileButton.gameObject.SetActive(true);
 
                 RaycastHit hit;
-                var mask = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable");//1 << layerMask;
+                var mask = layerMask | LayerMask.GetMask("Default");
                 var ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
                 Debug.DrawRay(ray.origin, ray.direction * maxDistance, Color.red);
                 if (Physics.Raycast(ray, out hit, maxDistance, mask))
