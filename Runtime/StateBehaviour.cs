@@ -119,6 +119,22 @@ namespace com.gb.statemachine_toolkit
         public string positionTag;
         [Tooltip("World position of the AudioSource. If Position Tag is specified and found, used as local offset instead.")]
         public Vector3 audioPosition;
+        [Tooltip("The target volume the audio will reach. Used as the peak volume for fade in.")]
+        [Range(0f, 1f)] public float targetVolume = 1f;
+        [Tooltip("If selected, the audio will fade in when played.")]
+        public bool useFadeIn = false;
+        [Tooltip("Duration of the fade in in seconds.")]
+        public float fadeInDuration = 1f;
+        [Tooltip("Volume shape during fade in. X = normalized time (0–1), Y = volume multiplier (0–1).")]
+        public AnimationCurve fadeInCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [Tooltip("If selected, the audio will fade out when stopped.")]
+        public bool useFadeOut = false;
+        [Tooltip("Duration of the fade out in seconds.")]
+        public float fadeOutDuration = 1f;
+        [Tooltip("Volume shape during fade out. X = normalized time (0–1), Y = volume multiplier (1→0 by default).")]
+        public AnimationCurve fadeOutCurve = AnimationCurve.Linear(0, 1, 1, 0);
+        [Tooltip("If selected, the state transition (stage increase and advanced transitions) will fire only after the fade completes. If not, they fire immediately when the fade starts.")]
+        public bool waitForFadeToComplete = true;
         #endregion AUDIO
 
         #region SCENE_CHANGE
@@ -157,6 +173,8 @@ namespace com.gb.statemachine_toolkit
         /// A list to hold the coroutines started by this StateBehaviour, to be able to stop them in case the state is interrupted/exited before completing them
         /// </summary>
         private List<Coroutine> _waitingRoutines = new List<Coroutine>();
+
+        private bool _transitionsHandledByFade = false;
 
         #endregion TRANSITION
 
@@ -268,6 +286,7 @@ namespace com.gb.statemachine_toolkit
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             Debug.Log($"{Time.time} Entering state {stateInfo.fullPathHash} {name}");
+            _transitionsHandledByFade = false;
             stateManager = animator.GetComponent<StateManager>();
             if (!stateManager)
             {
@@ -448,9 +467,57 @@ namespace com.gb.statemachine_toolkit
 
                 case StateType.AUDIO:
                     if (playAudio)
-                        stateManager.PlayAudio(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition);
+                    {
+                        if (useFadeIn)
+                        {
+                            if (waitForFadeToComplete)
+                            {
+                                _transitionsHandledByFade = true;
+                                Action onFadeInComplete = () =>
+                                {
+                                    if (increaseStage || increaseCustomInt) nextAction?.Invoke();
+                                    if (transitions != null && transitions.Count > 0)
+                                        _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));
+                                };
+                                stateManager.PlayAudioFadeIn(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition,
+                                    targetVolume, fadeInDuration, fadeInCurve, onFadeInComplete);
+                            }
+                            else
+                            {
+                                stateManager.PlayAudioFadeIn(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition,
+                                    targetVolume, fadeInDuration, fadeInCurve);
+                            }
+                        }
+                        else
+                        {
+                            stateManager.PlayAudio(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition);
+                        }
+                    }
                     else
-                        stateManager.StopAudio(audioSourceTag);
+                    {
+                        if (useFadeOut)
+                        {
+                            if (waitForFadeToComplete)
+                            {
+                                _transitionsHandledByFade = true;
+                                Action onFadeOutComplete = () =>
+                                {
+                                    if (increaseStage || increaseCustomInt) nextAction?.Invoke();
+                                    if (transitions != null && transitions.Count > 0)
+                                        _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));
+                                };
+                                stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve, onFadeOutComplete);
+                            }
+                            else
+                            {
+                                stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve);
+                            }
+                        }
+                        else
+                        {
+                            stateManager.StopAudio(audioSourceTag);
+                        }
+                    }
                     break;
 
                 case StateType.NONE:
@@ -463,13 +530,13 @@ namespace com.gb.statemachine_toolkit
             // simple transition actions are called for every state except:
             // - dialogue, that calls the nextAction after the text has been read, or an answer has been choosen
             // - scene, since transitioning to the new scene could lead to missing references
-            if (type != StateType.DIALOGUE && type != StateType.SCENE_CHANGE)
+            if (type != StateType.DIALOGUE && type != StateType.SCENE_CHANGE && !_transitionsHandledByFade)
             {
                 if (increaseStage || increaseCustomInt) nextAction();
             }
 
             // advanced transition actions (DIALOGUE handles these via nextAction, see above)
-            if (transitions != null && transitions.Count > 0 && type != StateType.DIALOGUE)
+            if (transitions != null && transitions.Count > 0 && type != StateType.DIALOGUE && !_transitionsHandledByFade)
             {
                 Debug.Log($"{Time.time} found {transitions.Count} transitions, started waiting {timeToWait} before calling their actions");
                 _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));

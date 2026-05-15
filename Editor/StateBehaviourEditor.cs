@@ -54,6 +54,14 @@ namespace com.gb.statemachine_toolkit.editor
         SerializedProperty m_is3D;
         SerializedProperty m_positionTag;
         SerializedProperty m_audioPosition;
+        SerializedProperty m_targetVolume;
+        SerializedProperty m_useFadeIn;
+        SerializedProperty m_fadeInDuration;
+        SerializedProperty m_fadeInCurve;
+        SerializedProperty m_useFadeOut;
+        SerializedProperty m_fadeOutDuration;
+        SerializedProperty m_fadeOutCurve;
+        SerializedProperty m_waitForFadeToComplete;
 
         SerializedProperty m_increaseStage;
         SerializedProperty m_increaseCustomInt;
@@ -107,6 +115,14 @@ namespace com.gb.statemachine_toolkit.editor
         GUIContent m_is3D_content;
         GUIContent m_positionTag_content;
         GUIContent m_audioPosition_content;
+        GUIContent m_targetVolume_content;
+        GUIContent m_useFadeIn_content;
+        GUIContent m_fadeInDuration_content;
+        GUIContent m_fadeInCurve_content;
+        GUIContent m_useFadeOut_content;
+        GUIContent m_fadeOutDuration_content;
+        GUIContent m_fadeOutCurve_content;
+        GUIContent m_waitForFadeToComplete_content;
 
         GUIContent m_increaseStage_content;
         GUIContent m_increaseCustomInt_content;
@@ -230,6 +246,14 @@ namespace com.gb.statemachine_toolkit.editor
             m_is3D = this.serializedObject.FindProperty("is3D");
             m_positionTag = this.serializedObject.FindProperty("positionTag");
             m_audioPosition = this.serializedObject.FindProperty("audioPosition");
+            m_targetVolume = this.serializedObject.FindProperty("targetVolume");
+            m_useFadeIn = this.serializedObject.FindProperty("useFadeIn");
+            m_fadeInDuration = this.serializedObject.FindProperty("fadeInDuration");
+            m_fadeInCurve = this.serializedObject.FindProperty("fadeInCurve");
+            m_useFadeOut = this.serializedObject.FindProperty("useFadeOut");
+            m_fadeOutDuration = this.serializedObject.FindProperty("fadeOutDuration");
+            m_fadeOutCurve = this.serializedObject.FindProperty("fadeOutCurve");
+            m_waitForFadeToComplete = this.serializedObject.FindProperty("waitForFadeToComplete");
 
             m_audioSourceTag_content = GetGUIContent<StateBehaviour>(m_audioSourceTag, true);
             m_audioClip_content = GetGUIContent<StateBehaviour>(m_audioClip, true);
@@ -238,6 +262,14 @@ namespace com.gb.statemachine_toolkit.editor
             m_is3D_content = GetGUIContent<StateBehaviour>(m_is3D, true);
             m_positionTag_content = GetGUIContent<StateBehaviour>(m_positionTag, true);
             m_audioPosition_content = GetGUIContent<StateBehaviour>(m_audioPosition, true);
+            m_targetVolume_content = GetGUIContent<StateBehaviour>(m_targetVolume, true);
+            m_useFadeIn_content = GetGUIContent<StateBehaviour>(m_useFadeIn, true);
+            m_fadeInDuration_content = GetGUIContent<StateBehaviour>(m_fadeInDuration, true);
+            m_fadeInCurve_content = GetGUIContent<StateBehaviour>(m_fadeInCurve, true);
+            m_useFadeOut_content = GetGUIContent<StateBehaviour>(m_useFadeOut, true);
+            m_fadeOutDuration_content = GetGUIContent<StateBehaviour>(m_fadeOutDuration, true);
+            m_fadeOutCurve_content = GetGUIContent<StateBehaviour>(m_fadeOutCurve, true);
+            m_waitForFadeToComplete_content = GetGUIContent<StateBehaviour>(m_waitForFadeToComplete, true);
 
             m_increaseStage_content = GetGUIContent<StateBehaviour>(m_increaseStage, true);
             m_increaseCustomInt_content = GetGUIContent<StateBehaviour>(m_increaseCustomInt, true);
@@ -391,7 +423,31 @@ namespace com.gb.statemachine_toolkit.editor
                             m_positionTag.stringValue = EditorGUILayout.TextField(m_positionTag_content, m_positionTag.stringValue);
                             EditorGUILayout.PropertyField(m_audioPosition, m_audioPosition_content);
                         }
+                        EditorGUILayout.Space();
+                        m_useFadeIn.boolValue = EditorGUILayout.Toggle(m_useFadeIn_content, m_useFadeIn.boolValue);
+                        if (m_useFadeIn.boolValue)
+                        {
+                            EditorGUI.indentLevel++;
+                            m_targetVolume.floatValue = EditorGUILayout.Slider(m_targetVolume_content, m_targetVolume.floatValue, 0f, 1f);
+                            m_fadeInDuration.floatValue = EditorGUILayout.FloatField(m_fadeInDuration_content, m_fadeInDuration.floatValue);
+                            EditorGUILayout.PropertyField(m_fadeInCurve, m_fadeInCurve_content);
+                            EditorGUI.indentLevel--;
+                        }
                     }
+                    else
+                    {
+                        EditorGUILayout.Space();
+                        m_useFadeOut.boolValue = EditorGUILayout.Toggle(m_useFadeOut_content, m_useFadeOut.boolValue);
+                        if (m_useFadeOut.boolValue)
+                        {
+                            EditorGUI.indentLevel++;
+                            m_fadeOutDuration.floatValue = EditorGUILayout.FloatField(m_fadeOutDuration_content, m_fadeOutDuration.floatValue);
+                            EditorGUILayout.PropertyField(m_fadeOutCurve, m_fadeOutCurve_content);
+                            EditorGUI.indentLevel--;
+                        }
+                    }
+                    if ((m_playAudio.boolValue && m_useFadeIn.boolValue) || (!m_playAudio.boolValue && m_useFadeOut.boolValue))
+                        m_waitForFadeToComplete.boolValue = EditorGUILayout.Toggle(m_waitForFadeToComplete_content, m_waitForFadeToComplete.boolValue);
                     break;
 
                 // NONE

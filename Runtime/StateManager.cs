@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -660,6 +661,107 @@ namespace com.gb.statemachine_toolkit
                 return;
             }
             audioSource.Stop();
+        }
+
+        public void PlayAudioFadeIn(string audioSourceTag, AudioClip clip, bool loop, bool is3D,
+            string positionTag, Vector3 position, float targetVolume, float duration, AnimationCurve curve, Action onComplete = null)
+        {
+            if (!clip)
+            {
+                Debug.LogWarning("Cannot play audio, no AudioClip assigned.");
+                return;
+            }
+
+            var go = string.IsNullOrWhiteSpace(audioSourceTag) ? null : GameObject.FindGameObjectWithTag(audioSourceTag);
+            if (!go)
+            {
+                go = new GameObject(string.IsNullOrWhiteSpace(audioSourceTag) ? "AudioSource" : audioSourceTag);
+                go.transform.SetParent(this.transform);
+                if (!string.IsNullOrWhiteSpace(audioSourceTag))
+                    go.tag = audioSourceTag;
+            }
+
+            var audioSource = go.GetComponent<AudioSource>();
+            if (!audioSource)
+                audioSource = go.AddComponent<AudioSource>();
+
+            if (!string.IsNullOrWhiteSpace(positionTag))
+            {
+                var posGo = GameObject.FindGameObjectWithTag(positionTag);
+                if (posGo)
+                {
+                    go.transform.SetParent(posGo.transform, false);
+                    go.transform.localPosition = position;
+                }
+                else
+                {
+                    Debug.LogWarning($"Cannot find GameObject with tag '{positionTag}', using world position as fallback.");
+                    go.transform.SetParent(this.transform, false);
+                    go.transform.position = position;
+                }
+            }
+            else
+            {
+                go.transform.SetParent(this.transform, false);
+                go.transform.position = position;
+            }
+
+            audioSource.clip = clip;
+            audioSource.loop = loop;
+            audioSource.spatialBlend = is3D ? 1f : 0f;
+            audioSource.volume = 0f;
+            audioSource.Play();
+            StartCoroutine(FadeInCoroutine(audioSource, targetVolume, duration, curve, onComplete));
+        }
+
+        public void FadeOutAudio(string audioSourceTag, float duration, AnimationCurve curve, Action onComplete = null)
+        {
+            if (string.IsNullOrWhiteSpace(audioSourceTag))
+            {
+                Debug.LogWarning("Cannot fade out audio, audioSourceTag is empty.");
+                return;
+            }
+            var go = GameObject.FindGameObjectWithTag(audioSourceTag);
+            if (!go)
+            {
+                Debug.LogWarning($"Cannot fade out audio, no GameObject found with tag '{audioSourceTag}'.");
+                return;
+            }
+            var audioSource = go.GetComponent<AudioSource>();
+            if (!audioSource)
+            {
+                Debug.LogWarning($"No AudioSource found on GameObject with tag '{audioSourceTag}'.");
+                return;
+            }
+            StartCoroutine(FadeOutCoroutine(audioSource, duration, curve, onComplete));
+        }
+
+        private IEnumerator FadeInCoroutine(AudioSource source, float targetVolume, float duration, AnimationCurve curve, Action onComplete)
+        {
+            float t = 0f;
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                source.volume = targetVolume * curve.Evaluate(Mathf.Clamp01(t / duration));
+                yield return null;
+            }
+            source.volume = targetVolume;
+            onComplete?.Invoke();
+        }
+
+        private IEnumerator FadeOutCoroutine(AudioSource source, float duration, AnimationCurve curve, Action onComplete)
+        {
+            float startVol = source.volume;
+            float t = 0f;
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                source.volume = startVol * curve.Evaluate(Mathf.Clamp01(t / duration));
+                yield return null;
+            }
+            source.volume = 0f;
+            source.Stop();
+            onComplete?.Invoke();
         }
 
         #endregion AUDIO
