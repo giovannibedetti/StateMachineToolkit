@@ -135,6 +135,7 @@ namespace com.gb.statemachine_toolkit.editor
         bool showObjectHelp = false;
         bool showSceneChangeHelp = false;
         bool showAudioHelp = false;
+        bool showNoneHelp = false;
         bool showAdvancedTransitions = false;
         bool showAdvancedTransitionsHelp = false;
         #endregion
@@ -391,6 +392,12 @@ namespace com.gb.statemachine_toolkit.editor
                             EditorGUILayout.PropertyField(m_audioPosition, m_audioPosition_content);
                         }
                     }
+                    break;
+
+                // NONE
+                case 7:
+                    showNoneHelp = EditorGUILayout.Foldout(showNoneHelp, "NONE HELP");
+                    if (showNoneHelp) DrawHelp(stateBehaviour.noneHelpMsg, helpStyle);
                     break;
 
                 default: break;

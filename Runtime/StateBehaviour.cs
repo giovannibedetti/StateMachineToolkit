@@ -14,7 +14,7 @@ namespace com.gb.statemachine_toolkit
         /// <summary>
         /// The various types a State can assume
         /// </summary>
-        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE, AUDIO }
+        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE, AUDIO, NONE }
         public StateType type;
 
         /// <summary>
@@ -257,6 +257,10 @@ namespace com.gb.statemachine_toolkit
 
         public readonly string sceneHelp = "The <b>SCENE_CHANGE STATE</b> is used to load a new scene. Just set the name of the scene to load in <i>Scene To Load</i> field." +
             "\nNo transition settings are available since the StateManager is scene based, and the changes to parameter aren't carried over into the new scene.";
+        public readonly string noneHelpMsg = "The <b>NONE STATE</b> performs no action on its own. " +
+            "Use it when you only need to modify Animator parameters via the <b>Transition Settings</b> below: " +
+            "increase/decrease Stage, set a custom Int, Bool or Trigger, or use Advanced Transitions to reset or force any parameter to a specific value.";
+
         public readonly string transitionsHelp = "The <b>Advanced Transitions</b> can be used to Increase, Decrease or Set the specified STAGE, INT, BOOL or TRIGGER parameters, so that the the flow of the StateMachine can be modified.";
         #endregion HELP_MSG
 
@@ -447,6 +451,9 @@ namespace com.gb.statemachine_toolkit
                         stateManager.PlayAudio(audioSourceTag, audioClip, loop, is3D, positionTag, audioPosition);
                     else
                         stateManager.StopAudio(audioSourceTag);
+                    break;
+
+                case StateType.NONE:
                     break;
 
                 default:
