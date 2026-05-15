@@ -436,6 +436,8 @@ namespace com.gb.statemachine_toolkit.editor
                     }
                     else
                     {
+                        if (string.IsNullOrWhiteSpace(m_audioSourceTag.stringValue))
+                            EditorGUILayout.PropertyField(m_audioClip, m_audioClip_content);
                         EditorGUILayout.Space();
                         m_useFadeOut.boolValue = EditorGUILayout.Toggle(m_useFadeOut_content, m_useFadeOut.boolValue);
                         if (m_useFadeOut.boolValue)

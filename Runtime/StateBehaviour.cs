@@ -495,6 +495,7 @@ namespace com.gb.statemachine_toolkit
                     }
                     else
                     {
+                        var stopByClip = string.IsNullOrWhiteSpace(audioSourceTag) && audioClip;
                         if (useFadeOut)
                         {
                             if (waitForFadeToComplete)
@@ -506,16 +507,25 @@ namespace com.gb.statemachine_toolkit
                                     if (transitions != null && transitions.Count > 0)
                                         _waitingRoutines.Add(Utilities.WaitThenAct(stateManager, timeToWait, transitionAction));
                                 };
-                                stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve, onFadeOutComplete);
+                                if (stopByClip)
+                                    stateManager.FadeOutAudioByClip(audioClip, fadeOutDuration, fadeOutCurve, onFadeOutComplete);
+                                else
+                                    stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve, onFadeOutComplete);
                             }
                             else
                             {
-                                stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve);
+                                if (stopByClip)
+                                    stateManager.FadeOutAudioByClip(audioClip, fadeOutDuration, fadeOutCurve);
+                                else
+                                    stateManager.FadeOutAudio(audioSourceTag, fadeOutDuration, fadeOutCurve);
                             }
                         }
                         else
                         {
-                            stateManager.StopAudio(audioSourceTag);
+                            if (stopByClip)
+                                stateManager.StopAudioByClip(audioClip);
+                            else
+                                stateManager.StopAudio(audioSourceTag);
                         }
                     }
                     break;

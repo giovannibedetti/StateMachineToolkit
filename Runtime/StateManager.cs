@@ -736,6 +736,23 @@ namespace com.gb.statemachine_toolkit
             StartCoroutine(FadeOutCoroutine(audioSource, duration, curve, onComplete));
         }
 
+        public void StopAudioByClip(AudioClip clip)
+        {
+            if (!clip) return;
+            foreach (var s in FindObjectsOfType<AudioSource>())
+                if (s.clip == clip && s.isPlaying) s.Stop();
+        }
+
+        public void FadeOutAudioByClip(AudioClip clip, float duration, AnimationCurve curve, Action onComplete = null)
+        {
+            if (!clip) return;
+            var matching = System.Array.FindAll(FindObjectsOfType<AudioSource>(), s => s.clip == clip && s.isPlaying);
+            if (matching.Length == 0) { onComplete?.Invoke(); return; }
+            int remaining = matching.Length;
+            foreach (var s in matching)
+                StartCoroutine(FadeOutCoroutine(s, duration, curve, () => { if (--remaining == 0) onComplete?.Invoke(); }));
+        }
+
         private IEnumerator FadeInCoroutine(AudioSource source, float targetVolume, float duration, AnimationCurve curve, Action onComplete)
         {
             float t = 0f;
