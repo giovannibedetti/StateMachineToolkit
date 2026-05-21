@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Video;
@@ -782,6 +783,39 @@ namespace com.gb.statemachine_toolkit
         }
 
         #endregion AUDIO
+
+        #region EVENTS
+
+        [Serializable]
+        public class NamedEvent
+        {
+            [Tooltip("The ID used to identify and trigger this event from a StateBehaviour.")]
+            public string id;
+            [Tooltip("The UnityEvent to invoke when this ID is triggered.")]
+            public UnityEvent onEvent;
+        }
+
+        [Tooltip("List of named events that can be triggered by EVENTS states. Each entry has an ID and a UnityEvent.")]
+        public List<NamedEvent> events = new List<NamedEvent>();
+
+        public void TriggerEvent(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Debug.LogWarning("Cannot trigger event, eventId is empty.");
+                return;
+            }
+            var namedEvent = events.Find(e => e.id == id);
+            if (namedEvent == null)
+            {
+                Debug.LogWarning($"No event found with id \"{id}\". Make sure it is configured in the StateManager Events list.");
+                return;
+            }
+            Debug.Log($"Triggering event: {id}");
+            namedEvent.onEvent?.Invoke();
+        }
+
+        #endregion EVENTS
 
         #region SCENE_CHANGE
 

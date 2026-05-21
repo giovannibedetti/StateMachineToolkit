@@ -47,6 +47,7 @@ namespace com.gb.statemachine_toolkit.editor
         SerializedProperty m_sceneToLoad;
         SerializedProperty m_autoLoad;
 
+        SerializedProperty m_eventId;
         SerializedProperty m_audioSourceTag;
         SerializedProperty m_audioClip;
         SerializedProperty m_playAudio;
@@ -108,6 +109,7 @@ namespace com.gb.statemachine_toolkit.editor
         GUIContent m_sceneToLoad_content;
         GUIContent m_autoLoad_content;
 
+        GUIContent m_eventId_content;
         GUIContent m_audioSourceTag_content;
         GUIContent m_audioClip_content;
         GUIContent m_playAudio_content;
@@ -151,6 +153,7 @@ namespace com.gb.statemachine_toolkit.editor
         bool showObjectHelp = false;
         bool showSceneChangeHelp = false;
         bool showAudioHelp = false;
+        bool showEventsHelp = false;
         bool showNoneHelp = false;
         bool showAdvancedTransitions = false;
         bool showAdvancedTransitionsHelp = false;
@@ -238,6 +241,9 @@ namespace com.gb.statemachine_toolkit.editor
             m_asyncLoad_content = GetGUIContent<StateBehaviour>(m_asyncLoad, true);
             m_sceneToLoad_content = GetGUIContent<StateBehaviour>(m_sceneToLoad, true);
             m_autoLoad_content = GetGUIContent<StateBehaviour>(m_autoLoad, true);
+
+            m_eventId = this.serializedObject.FindProperty("eventId");
+            m_eventId_content = GetGUIContent<StateBehaviour>(m_eventId, true);
 
             m_audioSourceTag = this.serializedObject.FindProperty("audioSourceTag");
             m_audioClip = this.serializedObject.FindProperty("audioClip");
@@ -452,8 +458,16 @@ namespace com.gb.statemachine_toolkit.editor
                         m_waitForFadeToComplete.boolValue = EditorGUILayout.Toggle(m_waitForFadeToComplete_content, m_waitForFadeToComplete.boolValue);
                     break;
 
-                // NONE
+                // EVENTS
                 case 7:
+                    showEventsHelp = EditorGUILayout.Foldout(showEventsHelp, "EVENTS HELP");
+                    if (showEventsHelp) DrawHelp(stateBehaviour.eventsHelpMsg, helpStyle);
+                    EditorGUILayout.Space();
+                    m_eventId.stringValue = EditorGUILayout.TextField(m_eventId_content, m_eventId.stringValue);
+                    break;
+
+                // NONE
+                case 8:
                     showNoneHelp = EditorGUILayout.Foldout(showNoneHelp, "NONE HELP");
                     if (showNoneHelp) DrawHelp(stateBehaviour.noneHelpMsg, helpStyle);
                     break;

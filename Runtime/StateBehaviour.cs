@@ -14,7 +14,7 @@ namespace com.gb.statemachine_toolkit
         /// <summary>
         /// The various types a State can assume
         /// </summary>
-        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE, AUDIO, NONE }
+        public enum StateType { TEXT, DIALOGUE, INTERACTION, CUTSCENE, OBJECT, SCENE_CHANGE, AUDIO, EVENTS, NONE }
         public StateType type;
 
         /// <summary>
@@ -136,6 +136,11 @@ namespace com.gb.statemachine_toolkit
         [Tooltip("If selected, the state transition (stage increase and advanced transitions) will fire only after the fade completes. If not, they fire immediately when the fade starts.")]
         public bool waitForFadeToComplete = true;
         #endregion AUDIO
+
+        #region EVENTS
+        [Tooltip("The ID of the event to trigger. Must match the ID of a NamedEvent configured in the StateManager.")]
+        public string eventId;
+        #endregion EVENTS
 
         #region SCENE_CHANGE
         [Tooltip("If the scene should be loaded asynchronously or not")]
@@ -273,7 +278,11 @@ namespace com.gb.statemachine_toolkit
             "\n- If <i>Position Tag</i> is specified and found, the AudioSource is parented to that object and <i>Audio Position</i> is used as local offset." +
             "\n- If <i>Position Tag</i> is specified but not found, a warning is logged and the world position is used as fallback.";
 
-        public readonly string sceneHelp = "The <b>SCENE_CHANGE STATE</b> is used to load a new scene. Just set the name of the scene to load in <i>Scene To Load</i> field." +
+        public readonly string eventsHelpMsg = "The <b>EVENTS STATE</b> fires a named UnityEvent configured on the StateManager." +
+            "\n\nSet the <i>Event ID</i> to match one of the IDs in the <b>Events</b> list on the StateManager component." +
+            "\nEach NamedEvent in the list has an ID and a UnityEvent where you can hook any number of scene functions using the standard Unity inspector.";
+
+        public readonly string sceneHelp ="The <b>SCENE_CHANGE STATE</b> is used to load a new scene. Just set the name of the scene to load in <i>Scene To Load</i> field." +
             "\nNo transition settings are available since the StateManager is scene based, and the changes to parameter aren't carried over into the new scene.";
         public readonly string noneHelpMsg = "The <b>NONE STATE</b> performs no action on its own. " +
             "Use it when you only need to modify Animator parameters via the <b>Transition Settings</b> below: " +
@@ -528,6 +537,10 @@ namespace com.gb.statemachine_toolkit
                                 stateManager.StopAudio(audioSourceTag);
                         }
                     }
+                    break;
+
+                case StateType.EVENTS:
+                    stateManager.TriggerEvent(eventId);
                     break;
 
                 case StateType.NONE:
